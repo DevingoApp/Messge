@@ -92,28 +92,28 @@
     <button onclick="addComment()">إرسال</button>
   </div>
 
-  <!-- إضافة مكتبات Firebase -->
+  <!-- Firebase SDK -->
   <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-database.js"></script>
 
   <script>
-    // تهيئة Firebase باستخدام التكوين الخاص بك
+    // إعداد Firebase
     const firebaseConfig = {
       apiKey: "AIzaSyCwNTc3owHtQBRsEyXAKvV7x1ZOK2aRGtY",
       authDomain: "messeg-3851b.firebaseapp.com",
+      databaseURL: "https://messeg-3851b-default-rtdb.firebaseio.com",
       projectId: "messeg-3851b",
-      storageBucket: "messeg-3851b.firebasestorage.app",
+      storageBucket: "messeg-3851b.appspot.com",
       messagingSenderId: "535349715629",
       appId: "1:535349715629:web:87c92164196a42f9149c24",
-      measurementId: "G-KTE7YFEWV0",
-      databaseURL: "https://messeg-3851b.firebaseio.com"  // تأكد من إضافة هذا الرابط
+      measurementId: "G-KTE7YFEWV0"
     };
 
     // تهيئة Firebase
     const app = firebase.initializeApp(firebaseConfig);
-    const database = firebase.database(app);
+    const database = firebase.database();
 
-    // وظيفة لتبديل ظهور مربع التعليقات
+    // تفعيل واجهة التعليقات
     function toggleCommentBox() {
       const commentBox = document.getElementById("comment-box");
       commentBox.style.display =
@@ -122,34 +122,45 @@
           : "none";
     }
 
-    // وظيفة لإرسال الرسالة إلى Firebase
+    // إضافة تعليق إلى Firebase
     function addComment() {
       const commentInput = document.getElementById("comment-input");
       const commentText = commentInput.value.trim();
 
       if (commentText) {
-        const commentsRef = database.ref('comments');
-        commentsRef.push({
+        // إضافة التعليق إلى Firebase
+        const newCommentRef = database.ref('comments').push();
+        newCommentRef.set({
           text: commentText,
           timestamp: Date.now()
         });
 
-        commentInput.value = ""; // مسح النص بعد الإرسال
+        // مسح محتوى صندوق التعليق
+        commentInput.value = "";
       }
     }
 
-    // الاستماع للتعليقات الجديدة من Firebase وعرضها
-    const commentsContainer = document.getElementById("comments-container");
-    const commentsRef = database.ref('comments');
+    // استقبال التعليقات من Firebase وعرضها في الوقت الفعلي
+    function listenForComments() {
+      const commentsRef = database.ref('comments');
 
-    commentsRef.on('child_added', (snapshot) => {
-      const commentData = snapshot.val();
-      const commentElement = document.createElement("div");
-      commentElement.className = "comment";
-      commentElement.textContent = commentData.text;
+      commentsRef.on('child_added', function(snapshot) {
+        const commentData = snapshot.val();
+        const commentText = commentData.text;
 
-      commentsContainer.appendChild(commentElement);
-    });
+        // إضافة التعليق إلى صفحة الويب
+        const commentContainer = document.getElementById("comments-container");
+        const commentElement = document.createElement("div");
+        commentElement.className = "comment";
+        commentElement.textContent = commentText;
+        commentContainer.appendChild(commentElement);
+      });
+    }
+
+    // استماع للتعليقات عند تحميل الصفحة
+    window.onload = function() {
+      listenForComments();
+    };
   </script>
 </body>
 </html>
