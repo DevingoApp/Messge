@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>أيقونة التعليقات</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: #f9f9f9;
+    }
+
+    #comments-container {
+      padding: 20px;
+    }
+
+    .comment {
+      background-color: #e3f2fd;
+      border: 1px solid #bbdefb;
+      border-radius: 8px;
+      padding: 10px;
+      margin: 10px 0;
+    }
+
+    #comment-icon {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      background-color: #007bff;
+      border-radius: 50%;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    }
+
+    #comment-icon button {
+      background: none;
+      border: none;
+      color: white;
+      font-size: 24px;
+      padding: 15px;
+      cursor: pointer;
+    }
+
+    #comment-box {
+      position: fixed;
+      bottom: 80px;
+      right: 20px;
+      display: none;
+      background-color: white;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+      padding: 10px;
+      width: 300px;
+    }
+
+    #comment-box textarea {
+      width: 100%;
+      height: 60px;
+      padding: 5px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      margin-bottom: 10px;
+    }
+
+    #comment-box button {
+      background-color: #007bff;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      padding: 8px 16px;
+      cursor: pointer;
+    }
+
+    #comment-box button:hover {
+      background-color: #0056b3;
+    }
+  </style>
+</head>
+<body>
+  <div id="comments-container">
+    <!-- سيتم إضافة التعليقات هنا -->
+  </div>
+
+  <div id="comment-icon">
+    <button onclick="toggleCommentBox()">💬</button>
+  </div>
+
+  <div id="comment-box">
+    <textarea id="comment-input" placeholder="اكتب تعليقك هنا..."></textarea>
+    <button onclick="addComment()">إرسال</button>
+  </div>
+
+  <!-- إضافة مكتبات Firebase -->
+  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-database.js"></script>
+
+  <script>
+    // تهيئة Firebase باستخدام التكوين الخاص بك
+    const firebaseConfig = {
+      apiKey: "AIzaSyCwNTc3owHtQBRsEyXAKvV7x1ZOK2aRGtY",
+      authDomain: "messeg-3851b.firebaseapp.com",
+      projectId: "messeg-3851b",
+      storageBucket: "messeg-3851b.firebasestorage.app",
+      messagingSenderId: "535349715629",
+      appId: "1:535349715629:web:87c92164196a42f9149c24",
+      measurementId: "G-KTE7YFEWV0",
+      databaseURL: "https://messeg-3851b.firebaseio.com"  // تأكد من إضافة هذا الرابط
+    };
+
+    // تهيئة Firebase
+    const app = firebase.initializeApp(firebaseConfig);
+    const database = firebase.database(app);
+
+    // وظيفة لتبديل ظهور مربع التعليقات
+    function toggleCommentBox() {
+      const commentBox = document.getElementById("comment-box");
+      commentBox.style.display =
+        commentBox.style.display === "none" || !commentBox.style.display
+          ? "block"
+          : "none";
+    }
+
+    // وظيفة لإرسال الرسالة إلى Firebase
+    function addComment() {
+      const commentInput = document.getElementById("comment-input");
+      const commentText = commentInput.value.trim();
+
+      if (commentText) {
+        const commentsRef = database.ref('comments');
+        commentsRef.push({
+          text: commentText,
+          timestamp: Date.now()
+        });
+
+        commentInput.value = ""; // مسح النص بعد الإرسال
+      }
+    }
+
+    // الاستماع للتعليقات الجديدة من Firebase وعرضها
+    const commentsContainer = document.getElementById("comments-container");
+    const commentsRef = database.ref('comments');
+
+    commentsRef.on('child_added', (snapshot) => {
+      const commentData = snapshot.val();
+      const commentElement = document.createElement("div");
+      commentElement.className = "comment";
+      commentElement.textContent = commentData.text;
+
+      commentsContainer.appendChild(commentElement);
+    });
+  </script>
+</body>
+</html>
