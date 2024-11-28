@@ -3,93 +3,45 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>تعليقات في الوقت الفعلي</title>
+    <title>Devingo App</title>
+
     <style>
-        #comments-container {
-            max-width: 600px;
-            margin: 20px auto;
-            padding: 10px;
-            background-color: #f1f1f1;
-            border-radius: 8px;
+        body, html {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            overflow: hidden;
         }
-        .comment {
-            background-color: #fff;
-            padding: 10px;
-            margin-bottom: 10px;
-            border-radius: 5px;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+
+        iframe {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border: none;
+            transform: translateY(-20px); /* تحريك الإطار للأعلى */
+        }
+
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 15px;
+            background-color: #f6f6f6;
+            z-index: 9999;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            font-family: sans-serif;
+            color: #fff;
         }
     </style>
 </head>
 <body>
-    <h2 style="text-align:center;">تعليقات المستخدمين</h2>
-    <div id="comments-container"></div>
-
-    <textarea id="comment-input" placeholder="اكتب تعليقك هنا..." rows="4" cols="50"></textarea><br>
-    <button onclick="addComment()">إرسال</button>
-
-    <!-- إضافة روابط Firebase SDK -->
-    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-database.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-analytics.js"></script>
-
-    <!-- إضافة الكود الخاص بالFirebase -->
-    <script>
-        // إعدادات Firebase الخاصة بك
-        const firebaseConfig = {
-            apiKey: "AIzaSyCwNTc3owHtQBRsEyXAKvV7x1ZOK2aRGtY",
-            authDomain: "messeg-3851b.firebaseapp.com",
-            databaseURL: "https://messeg-3851b-default-rtdb.firebaseio.com",
-            projectId: "messeg-3851b",
-            storageBucket: "messeg-3851b.appspot.com",
-            messagingSenderId: "535349715629",
-            appId: "1:535349715629:web:87c92164196a42f9149c24",
-            measurementId: "G-KTE7YFEWV0"
-        };
-
-        // تهيئة Firebase
-        const app = firebase.initializeApp(firebaseConfig);
-        const database = firebase.database(app);
-
-        // إرسال تعليق إلى Firebase
-        function addComment() {
-            const commentInput = document.getElementById("comment-input");
-            const commentText = commentInput.value.trim();
-
-            if (commentText) {
-                // إضافة التعليق إلى قاعدة بيانات Firebase
-                const newCommentRef = database.ref('comments').push();
-                newCommentRef.set({
-                    text: commentText,
-                    timestamp: Date.now()
-                }).then(() => {
-                    console.log("تم إرسال التعليق بنجاح!");
-                    commentInput.value = ""; // مسح محتوى صندوق التعليق بعد الإرسال
-                }).catch(error => {
-                    console.error("خطأ في إرسال التعليق: ", error);
-                });
-            }
-        }
-
-        // استقبال التعليقات وعرضها في الوقت الفعلي
-        function listenForComments() {
-            const commentsRef = database.ref('comments');
-
-            commentsRef.on('child_added', function(snapshot) {
-                const commentData = snapshot.val();
-                const commentText = commentData.text;
-
-                // إضافة التعليق إلى صفحة الويب
-                const commentContainer = document.getElementById("comments-container");
-                const commentElement = document.createElement("div");
-                commentElement.className = "comment";
-                commentElement.textContent = commentText;
-                commentContainer.appendChild(commentElement);
-            });
-        }
-
-        // استماع للتعليقات عند تحميل الصفحة
-        listenForComments();
-    </script>
+    <div class="overlay"></div>
+    <iframe id="myFrame" loading="lazy" src="https://omar-faroogs-team-1.adalo.com/?target=ej6lq30hq9ke7qn7qjqaiw2lt&params=%7B%7D"></iframe>
 </body>
 </html>
